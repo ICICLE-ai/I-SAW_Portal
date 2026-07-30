@@ -20,7 +20,7 @@ pod-name: isawfrontendprod
 
 runtime-type: node-frontend
 
-runtime-version: "20.0"
+runtime-version: "24.18.1"
 
 # ──────────────────────────────────────────────────────────────────────
 # System Packages
