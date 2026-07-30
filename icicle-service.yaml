@@ -18,7 +18,7 @@ pod-name: isawfrontendprod
 # Runtime Configuration
 # ──────────────────────────────────────────────────────────────────────
 
-runtime-type: node
+runtime-type: node-frontend
 
 runtime-version: "20.0"
 
