@@ -81,7 +81,7 @@ export default function App() {
         </main>
         
         <footer className="px-8 py-4 border-t border-stone-900 bg-stone-950 flex justify-between items-center text-[10px] text-stone-600 font-mono uppercase tracking-widest hidden md:flex">
-           <div>&copy; 2024 I-SAW: SENSING AND ANALYTICS ON WILDLIFE</div>
+           <div>&copy; 2026 I-SAW: SENSING AND ANALYTICS ON WILDLIFE</div>
            <div className="flex space-x-6">
              <span>MQTT_V3.1.1</span>
              <span>EDGE_ENGINE_V1.0.4</span>
