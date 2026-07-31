@@ -16,25 +16,11 @@ export function TabVision() {
            <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2v20"/><path d="M2 12h20"/><path d="m4.93 4.93 14.14 14.14"/><path d="m4.93 19.07 14.14-14.14"/></svg>
         </div>
         <h1 className="text-5xl font-bold text-stone-50 leading-tight mb-6">
-          Plug & Play <span className="text-emerald-400 italic">Wildlife Monitoring</span><br/>for K-12 Camps
+          I-SAW: <span className="text-emerald-400 italic">Plug & Play</span><br/>Infrastructure for K-12
         </h1>
-        <p className="text-lg text-stone-400 max-w-xl leading-relaxed mb-8">
-          Bridging the gap between wilderness and advanced AI. We provide edge-networked intelligent backpacks designed to empower citizen science, transform field education, and protect data privacy at the edge.
+        <p className="text-lg text-stone-400 max-w-xl leading-relaxed">
+          Infrastructure for Sensing and Analytics on Wildlife. Bridging the gap between wilderness and advanced AI. We provide edge-networked intelligent systems designed to empower citizen science, transform field education, and protect data privacy at the edge.
         </p>
-        <div className="flex space-x-4">
-          <div className="bg-stone-900/60 p-4 rounded-xl border border-stone-800 flex-1">
-            <div className="text-emerald-400 font-bold mb-1 flex items-center gap-2"><Sprout className="w-4 h-4" /> New Users</div>
-            <p className="text-xs text-stone-500">Immediate hardware simulation. Try out the platform right in your browser.</p>
-          </div>
-          <div className="bg-stone-900/60 p-4 rounded-xl border border-stone-800 flex-1">
-            <div className="text-emerald-400 font-bold mb-1 flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Directors</div>
-            <p className="text-xs text-stone-500">Curriculum-ready tech. Seamlessly integrate advanced AI into student activities.</p>
-          </div>
-          <div className="bg-stone-900/60 p-4 rounded-xl border border-stone-800 flex-1">
-            <div className="text-emerald-400 font-bold mb-1 flex items-center gap-2"><Network className="w-4 h-4" /> Investors</div>
-            <p className="text-xs text-stone-500">Scalable data hubs. Aggregating high-value points to centralized TACC infrastructure.</p>
-          </div>
-        </div>
       </div>
       <div className="col-span-4 grid grid-rows-3 gap-4">
         <div className="bg-stone-900/80 border border-emerald-500/20 rounded-2xl p-6">

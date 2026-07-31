@@ -8,7 +8,7 @@ import { CanvasBackground } from './components/CanvasBackground';
 import { TabVision } from './components/TabVision';
 import { TabSandbox } from './components/TabSandbox';
 import { TabOnboarding } from './components/TabOnboarding';
-import { Leaf } from 'lucide-react';
+import { BrainCircuit } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'vision' | 'sandbox' | 'onboarding'>('vision');
@@ -21,12 +21,15 @@ export default function App() {
 
       <div className="relative flex flex-col h-full z-10">
         <header className="flex items-center justify-between px-8 py-4 border-b border-emerald-900/30 bg-stone-950/80 backdrop-blur-md">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-              <Leaf className="w-5 h-5 text-stone-950" />
+          <div className="flex flex-row items-center gap-3">
+            <div className="w-10 h-10 bg-blue-950 rounded-xl flex items-center justify-center border border-indigo-500/30 shadow-md shrink-0 rotate-90">
+              <BrainCircuit className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-bold tracking-tight text-emerald-50">
-              Ecology <span className="text-emerald-400">Backpacks</span>
+            <span className="text-xl font-bold tracking-tight text-emerald-50 flex items-center gap-3 whitespace-nowrap">
+              I-SAW <span className="text-emerald-400 whitespace-nowrap">Portal</span>
+              <span className="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full px-2.5 py-0.5 text-xs font-mono font-semibold tracking-wider whitespace-nowrap shrink-0">
+                ICICLE-AI
+              </span>
             </span>
           </div>
 
@@ -78,7 +81,7 @@ export default function App() {
         </main>
         
         <footer className="px-8 py-4 border-t border-stone-900 bg-stone-950 flex justify-between items-center text-[10px] text-stone-600 font-mono uppercase tracking-widest hidden md:flex">
-           <div>&copy; 2024 CAMP WILDLIFE ECOLOGY BACKPACKS</div>
+           <div>&copy; 2024 I-SAW: SENSING AND ANALYTICS ON WILDLIFE</div>
            <div className="flex space-x-6">
              <span>MQTT_V3.1.1</span>
              <span>EDGE_ENGINE_V1.0.4</span>
