@@ -59,6 +59,52 @@ function SubTabButton({ active, onClick, label }: { active: boolean; onClick: ()
 }
 
 function QuickStart() {
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownload = () => {
+    setDownloading(true);
+    setTimeout(() => {
+      const scriptContent = `#!/bin/bash
+echo "Setting up Gesture-Controlled Drone Module..."
+
+# Clone the repository
+git clone https://github.com/ICICLE-ai/high_school_io_2026.git
+cd high_school_io_2026
+
+# Create Dockerfile
+cat << 'EOF' > Dockerfile
+FROM python:3.9-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y \\
+    libgl1-mesa-glx \\
+    libglib2.0-0 \\
+    && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+CMD ["python", "main.py"]
+EOF
+
+echo "Building Docker image..."
+docker build -t gesture-drone-module .
+
+echo "Starting module in test mode..."
+docker run -it --device=/dev/video0:/dev/video0 gesture-drone-module
+`;
+
+      const blob = new Blob([scriptContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'setup-drone.sh';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setDownloading(false);
+    }, 1200);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -67,22 +113,80 @@ function QuickStart() {
       transition={{ duration: 0.3 }}
       className="flex flex-col h-full"
     >
-      <h3 className="text-xl font-bold mb-2">Download Edge Controller</h3>
-      <p className="text-stone-400 text-sm mb-8">Deploy a local instance of the Ecology Edge Control Center on your workstation to begin mapping deployments.</p>
-      <div className="bg-black rounded-xl p-6 font-mono text-sm overflow-hidden border border-stone-800 relative">
-        <div className="flex space-x-2 mb-4">
-          <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
-          <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-          <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
+      <h3 className="text-xl font-bold mb-2">Gesture-Controlled Drone Module</h3>
+      <p className="text-stone-400 text-sm mb-6 max-w-2xl">
+        Control a Parrot Anafi drone with hand gestures — no model training required. Show your hand to a webcam and the app maps what it sees to drone commands defined in a simple config file.
+      </p>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-[300px]">
+        {/* Left Col: Setup & Run */}
+        <div className="bg-stone-950/50 rounded-2xl border border-stone-800 p-6 flex flex-col">
+          <h4 className="text-sm font-bold text-stone-200 mb-4 flex items-center gap-2">
+            <Package className="w-4 h-4 text-emerald-400" />
+            Quick Setup (Docker)
+          </h4>
+          <p className="text-xs text-stone-400 mb-4">
+            Download the deployment script on the right, which will automatically fetch the source code, build the container, and run it safely with no drone connected.
+          </p>
+          
+          <div className="bg-black rounded-xl p-4 font-mono text-[11px] overflow-hidden border border-stone-800 relative flex-1 flex flex-col justify-center">
+            <div className="flex space-x-2 mb-3">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
+            </div>
+            <div className="text-stone-500 mb-1"># 1. Give execution permission</div>
+            <div className="text-emerald-500 mb-3">$ chmod +x setup-drone.sh</div>
+            
+            <div className="text-stone-500 mb-1"># 2. Run the automated deployment script</div>
+            <div className="text-emerald-500 mb-3">$ ./setup-drone.sh</div>
+
+            <div className="text-stone-500 mt-2">Setting up Gesture-Controlled Drone Module...</div>
+            <div className="text-stone-500">Cloning into 'high_school_io_2026'...</div>
+            <div className="text-stone-500">Building Docker image...</div>
+            <div className="text-stone-500">Starting module in test mode...</div>
+            <div className="text-stone-300 mt-2">Gesture detected: <span className="text-emerald-400 font-bold">peace</span> &rarr; move_by(1, 0, 0, 0)</div>
+          </div>
         </div>
-        <div className="text-emerald-500 mb-2">$ docker-compose up -d ecology-edge-center</div>
-        <div className="text-stone-600">Pulling layers... [####################] 100%</div>
-        <div className="text-stone-600">Status: Downloaded newer image for ecology/edge-center:latest</div>
-        <div className="text-stone-600">Creating ecology-edge-center ... <span className="text-emerald-400">done</span></div>
-      </div>
-      <div className="mt-auto pt-6 flex items-center justify-between p-6 bg-stone-950 rounded-2xl border border-stone-800 mt-6">
-        <p className="text-xs text-stone-500">Once running, navigate to <code className="text-emerald-400 font-mono text-[10px]">localhost:3000</code> to unlock advanced map planning tools.</p>
-        <button className="px-6 py-3 bg-emerald-500 text-stone-950 font-bold rounded-lg text-sm shrink-0 hover:bg-emerald-400 transition-colors">Open Documentation</button>
+
+        {/* Right Col: Feature Overview & Download */}
+        <div className="flex flex-col gap-4">
+          <div className="bg-stone-950/50 rounded-2xl border border-stone-800 p-6 flex-1">
+             <h4 className="text-sm font-bold text-stone-200 mb-4">Key Features</h4>
+             <ul className="space-y-3 text-sm text-stone-300">
+               <li className="flex items-start gap-2">
+                 <span className="text-emerald-400 mt-0.5">&bull;</span>
+                 <span><strong className="text-stone-100">45+ Pre-trained Gestures:</strong> Detects likes, peace signs, fists, stops, and more out of the box using ONNX.</span>
+               </li>
+               <li className="flex items-start gap-2">
+                 <span className="text-emerald-400 mt-0.5">&bull;</span>
+                 <span><strong className="text-stone-100">Live & Test Modes:</strong> Test safely via terminal, or switch <code className="text-emerald-400 font-mono text-xs">RUN_MODE="live"</code> to fly a real Parrot Anafi.</span>
+               </li>
+               <li className="flex items-start gap-2">
+                 <span className="text-emerald-400 mt-0.5">&bull;</span>
+                 <span><strong className="text-stone-100">Bounded Movement:</strong> Prevents fly-aways by tracking balanced opposing gestures.</span>
+               </li>
+             </ul>
+          </div>
+
+          <button
+            onClick={handleDownload}
+            disabled={downloading}
+            className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-bold rounded-2xl flex items-center justify-center transition-colors shadow-lg shadow-emerald-500/20 disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            {downloading ? (
+              <span className="flex items-center justify-center">
+                 <span className="animate-spin h-5 w-5 border-2 border-stone-950 border-t-transparent rounded-full mr-3"></span>
+                 PACKAGING MODULE...
+              </span>
+            ) : (
+              <>
+                <Download className="w-5 h-5 mr-2" />
+                GET DEPLOYMENT PACKAGE
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </motion.div>
   );
