@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Activity,
   AlertTriangle,
@@ -7,6 +7,8 @@ import {
   Bell,
   Camera,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Crosshair,
   Droplets,
   Eye,
@@ -244,8 +246,7 @@ function HoneypotView() {
   return (
     <>
       <div className="bg-stone-900/80 border border-stone-800 rounded-3xl p-6">
-        <h3 className="text-xs font-bold text-stone-500 uppercase tracking-widest mb-4">Honeypot Structure</h3>
-        <HoneypotStructureDiagram />
+        <HoneypotSlideshow />
       </div>
 
       <div className="bg-stone-900/80 border border-stone-800 rounded-3xl p-6">
@@ -361,43 +362,304 @@ function HoneypotView() {
   );
 }
 
-function HoneypotStructureDiagram() {
+const HONEYPOT_SLIDES = [
+  { title: 'Structure Sketch', caption: 'A realistic look at the honeypot in the field, showing the open interior, footfall sensors, and alternating trays.' },
+  { title: 'Setup Walkthrough', caption: 'An animated, step-by-step look at how a counselor sets up a honeypot in the field.' },
+];
+
+function HoneypotSlideshow() {
+  const [slide, setSlide] = useState(0);
+  const goTo = (i) => setSlide((i + HONEYPOT_SLIDES.length) % HONEYPOT_SLIDES.length);
+
   return (
-    <svg viewBox="0 0 640 310" className="w-full h-auto max-w-3xl mx-auto" role="img" aria-label="Diagram of the honeypot structure">
-      <circle cx="320" cy="14" r="6" fill="none" stroke="#10b981" strokeWidth="2" />
-      <line x1="320" y1="20" x2="320" y2="34" stroke="#10b981" strokeWidth="2" />
-      <polygon points="320,34 470,108 320,132 170,108" fill="none" stroke="#34d399" strokeWidth="2" strokeLinejoin="round" />
-      <line x1="320" y1="34" x2="320" y2="132" stroke="#34d399" strokeWidth="1.5" opacity="0.5" />
-      <line x1="205" y1="112" x2="205" y2="228" stroke="#57534e" strokeWidth="3" />
-      <line x1="265" y1="122" x2="265" y2="228" stroke="#57534e" strokeWidth="3" />
-      <line x1="375" y1="122" x2="375" y2="228" stroke="#57534e" strokeWidth="3" />
-      <line x1="435" y1="112" x2="435" y2="228" stroke="#57534e" strokeWidth="3" />
-      <line x1="150" y1="170" x2="490" y2="170" stroke="#10b981" strokeWidth="1.5" strokeDasharray="6 6" opacity="0.6" />
-      <polygon points="150,170 160,165 160,175" fill="#10b981" opacity="0.6" />
-      <polygon points="490,170 480,165 480,175" fill="#10b981" opacity="0.6" />
-      <rect x="140" y="228" width="60" height="26" fill="#d97706" opacity="0.55" />
-      <rect x="200" y="228" width="60" height="26" fill="#e11d48" opacity="0.55" />
-      <rect x="260" y="228" width="60" height="26" fill="#d97706" opacity="0.55" />
-      <rect x="320" y="228" width="60" height="26" fill="#e11d48" opacity="0.55" />
-      <rect x="380" y="228" width="60" height="26" fill="#d97706" opacity="0.55" />
-      <rect x="440" y="228" width="60" height="26" fill="#e11d48" opacity="0.55" />
-      <rect x="140" y="228" width="360" height="26" fill="none" stroke="#78716c" strokeWidth="1.5" rx="4" />
-      <line x1="100" y1="254" x2="540" y2="254" stroke="#44403c" strokeWidth="1" />
+    <div>
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
+        <h3 className="text-xs font-bold text-stone-500 uppercase tracking-widest">Honeypot Structure</h3>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => goTo(slide - 1)}
+            className="p-1.5 rounded-lg text-stone-500 hover:text-emerald-400 hover:bg-stone-800/60 transition-colors"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <div className="flex items-center gap-1.5">
+            {HONEYPOT_SLIDES.map((s, i) => (
+              <button
+                key={s.title}
+                onClick={() => goTo(i)}
+                aria-label={`Go to ${s.title}`}
+                className={`h-1.5 rounded-full transition-all ${i === slide ? 'w-6 bg-emerald-500' : 'w-1.5 bg-stone-700 hover:bg-stone-600'}`}
+              />
+            ))}
+          </div>
+          <button
+            onClick={() => goTo(slide + 1)}
+            className="p-1.5 rounded-lg text-stone-500 hover:text-emerald-400 hover:bg-stone-800/60 transition-colors"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
 
-      <circle cx="320" cy="34" r="3" fill="#34d399" />
-      <line x1="320" y1="34" x2="380" y2="4" stroke="#57534e" strokeWidth="1" strokeDasharray="3 3" />
-      <text x="384" y="8" fontSize="11" fill="#6ee7b7" fontFamily="monospace">On-feeder microphone</text>
+      <div key={slide} className="fade-slide-in">
+        {slide === 0 ? <HoneypotSketch /> : <SetupAnimation />}
+        <p className="text-center text-xs text-stone-500 mt-4 max-w-xl mx-auto">{HONEYPOT_SLIDES[slide].caption}</p>
+      </div>
+    </div>
+  );
+}
 
-      <circle cx="205" cy="228" r="3" fill="#34d399" />
-      <line x1="205" y1="228" x2="90" y2="278" stroke="#57534e" strokeWidth="1" strokeDasharray="3 3" />
-      <text x="10" y="290" fontSize="11" fill="#6ee7b7" fontFamily="monospace">Footfall sensor, each perch</text>
+function renderGrassBlades(y = 336) {
+  return Array.from({ length: 40 }).map((_, i) => (
+    <line key={i} x1={i * 17} y1={y} x2={i * 17 - 4} y2={y - 12} stroke="#3f5c34" strokeWidth="2" strokeLinecap="round" />
+  ));
+}
 
-      <text x="255" y="160" fontSize="11" fill="#6ee7b7" fontFamily="monospace">Open, see-through interior</text>
+function sceneBackdrop() {
+  return (
+    <>
+      <ellipse cx="90" cy="330" rx="110" ry="70" fill="#2f4a2a" opacity="0.3" />
+      <ellipse cx="560" cy="340" rx="120" ry="75" fill="#2f4a2a" opacity="0.3" />
+      <rect x="0" y="336" width="640" height="84" fill="#22301c" />
+      <rect x="0" y="332" width="640" height="8" fill="#3a5a2f" />
+      {renderGrassBlades(336)}
+    </>
+  );
+}
 
-      <line x1="440" y1="254" x2="500" y2="278" stroke="#57534e" strokeWidth="1" strokeDasharray="3 3" />
-      <text x="440" y="292" fontSize="11" fill="#fbbf24" fontFamily="monospace">Seed</text>
-      <text x="480" y="292" fontSize="11" fill="#fb7185" fontFamily="monospace">/ Nectar tray</text>
+function HoneypotSketch() {
+  return (
+    <svg viewBox="0 0 640 420" className="w-full h-auto max-w-3xl mx-auto" role="img" aria-label="Realistic illustration of the honeypot feeder, showing the open interior, footfall sensors, and alternating seed and nectar trays">
+      {sceneBackdrop()}
+      <ellipse cx="320" cy="340" rx="190" ry="20" fill="#000000" opacity="0.3" />
+
+      <path d="M320,300 L500,300 A180,58 0 0,1 410,352 Z" fill="#b3462c" />
+      <path d="M320,300 L410,352 A180,58 0 0,1 230,352 Z" fill="#c99a52" />
+      <path d="M320,300 L230,352 A180,58 0 0,1 140,300 Z" fill="#b3462c" />
+      <path d="M320,300 L140,300 A180,58 0 0,1 230,248 Z" fill="#c99a52" />
+      <path d="M320,300 L230,248 A180,58 0 0,1 410,248 Z" fill="#b3462c" />
+      <path d="M320,300 L410,248 A180,58 0 0,1 500,300 Z" fill="#c99a52" />
+      <ellipse cx="320" cy="300" rx="180" ry="58" fill="none" stroke="#1c1a16" strokeWidth="3" />
+      <g fill="#7a5325" opacity="0.7">
+        <circle cx="250" cy="330" r="2" /><circle cx="258" cy="336" r="2" /><circle cx="266" cy="326" r="2" />
+        <circle cx="380" cy="330" r="2" /><circle cx="388" cy="322" r="2" /><circle cx="372" cy="338" r="2" />
+      </g>
+      <ellipse cx="460" cy="312" rx="18" ry="6" fill="#e8735a" opacity="0.6" />
+      <ellipse cx="180" cy="312" rx="18" ry="6" fill="#e8735a" opacity="0.6" />
+
+      <rect x="200" y="150" width="12" height="150" rx="4" fill="#a97c4f" />
+      <rect x="207" y="150" width="4" height="150" fill="#7c5a37" opacity="0.5" />
+      <rect x="260" y="165" width="10" height="140" rx="4" fill="#a97c4f" />
+      <rect x="378" y="165" width="10" height="140" rx="4" fill="#a97c4f" />
+      <rect x="432" y="150" width="12" height="150" rx="4" fill="#a97c4f" />
+      <rect x="439" y="150" width="4" height="150" fill="#7c5a37" opacity="0.5" />
+
+      <polygon points="320,60 320,160 470,160" fill="#284a30" />
+      <polygon points="320,60 170,160 320,160" fill="#3f6b4f" />
+      <polygon points="320,60 470,160 320,185 170,160" fill="none" stroke="#1c2e20" strokeWidth="2" strokeLinejoin="round" />
+      <g stroke="#1c2e20" strokeWidth="1" opacity="0.4">
+        <line x1="200" y1="140" x2="230" y2="128" /><line x1="220" y1="150" x2="250" y2="138" />
+        <line x1="420" y1="140" x2="450" y2="128" opacity="0.25" /><line x1="400" y1="150" x2="430" y2="138" opacity="0.25" />
+      </g>
+
+      <circle cx="320" cy="44" r="7" fill="none" stroke="#78716c" strokeWidth="3" />
+      <line x1="320" y1="51" x2="320" y2="60" stroke="#78716c" strokeWidth="3" />
+
+      <rect x="352" y="70" width="10" height="18" rx="4" fill="#292524" />
+      <circle cx="357" cy="72" r="3" fill="#57534e" />
+
+      <line x1="160" y1="215" x2="480" y2="215" stroke="#dcd3c4" strokeWidth="1.5" strokeDasharray="5 6" opacity="0.55" />
+
+      <rect x="180" y="272" width="26" height="6" rx="3" fill="#8a6239" />
+      <rect x="446" y="272" width="26" height="6" rx="3" fill="#8a6239" />
+      <ellipse cx="466" cy="262" rx="12" ry="8" fill="#a3352b" />
+      <circle cx="476" cy="256" r="4.5" fill="#a3352b" />
+      <polygon points="480,256 488,254 480,259" fill="#d19a3d" />
+
+      <ellipse cx="206" cy="278" rx="7" ry="3" fill="#1c1917" />
+      <circle cx="206" cy="278" r="3" fill="#34d399" />
+      <circle cx="206" cy="278" r="3" fill="none" stroke="#34d399" strokeWidth="1.5">
+        <animate attributeName="r" values="3;10;3" dur="2.4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.8;0;0.8" dur="2.4s" repeatCount="indefinite" />
+      </circle>
+      <ellipse cx="446" cy="278" rx="7" ry="3" fill="#1c1917" />
+      <circle cx="446" cy="278" r="3" fill="#34d399" />
+      <circle cx="446" cy="278" r="3" fill="none" stroke="#34d399" strokeWidth="1.5">
+        <animate attributeName="r" values="3;10;3" dur="2.4s" begin="1.2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.8;0;0.8" dur="2.4s" begin="1.2s" repeatCount="indefinite" />
+      </circle>
+
+      <line x1="357" y1="72" x2="420" y2="46" stroke="#a8a29e" strokeWidth="1" />
+      <text x="424" y="50" fontSize="11" fill="#e7e5e4" fontFamily="ui-sans-serif, system-ui">On-feeder microphone</text>
+
+      <line x1="206" y1="278" x2="80" y2="230" stroke="#a8a29e" strokeWidth="1" />
+      <text x="14" y="226" fontSize="11" fill="#e7e5e4" fontFamily="ui-sans-serif, system-ui">Footfall sensor, each perch</text>
+
+      <text x="235" y="205" fontSize="11" fill="#e7e5e4" fontFamily="ui-sans-serif, system-ui">Open, see-through interior</text>
+
+      <line x1="460" y1="312" x2="560" y2="360" stroke="#a8a29e" strokeWidth="1" />
+      <text x="500" y="376" fontSize="11" fill="#fca5a5" fontFamily="ui-sans-serif, system-ui">Nectar</text>
+      <text x="500" y="390" fontSize="11" fill="#e7c07d" fontFamily="ui-sans-serif, system-ui">/ Seed tray</text>
     </svg>
+  );
+}
+
+function SceneKit() {
+  return (
+    <svg viewBox="0 0 640 420" className="w-full h-auto max-w-3xl mx-auto" role="img" aria-label="Sketch of an open field pack with the honeypot sensors and hardware laid out beside it">
+      {sceneBackdrop()}
+      <ellipse cx="320" cy="356" rx="170" ry="16" fill="#000000" opacity="0.25" />
+
+      <path d="M235,220 q-14,0 -14,20 v90 q0,20 18,20 h150 q18,0 18,-20 v-90 q0,-20 -14,-20 Z" fill="#5b6b47" />
+      <path d="M235,220 q-14,0 -14,20 v90 q0,20 18,20 h150 q18,0 18,-20 v-90 q0,-20 -14,-20 Z" fill="none" stroke="#3f4a33" strokeWidth="2" />
+      <path d="M239,222 q40,-46 122,-4 l-10,14 q-52,-30 -102,4 Z" fill="#71835b" />
+      <path d="M239,222 q40,-46 122,-4" fill="none" stroke="#3f4a33" strokeWidth="3" strokeLinecap="round" />
+      <path d="M250,258 q-20,20 0,60" stroke="#3f4a33" strokeWidth="4" fill="none" strokeLinecap="round" />
+      <path d="M390,258 q20,20 0,60" stroke="#3f4a33" strokeWidth="4" fill="none" strokeLinecap="round" />
+      <rect x="270" y="290" width="80" height="40" rx="6" fill="#4c5a3c" stroke="#3f4a33" strokeWidth="1.5" />
+
+      <polygon points="150,300 120,330 180,330" fill="#3f6b4f" stroke="#1c2e20" strokeWidth="1.5" />
+      <text x="150" y="348" fontSize="10" textAnchor="middle" fill="#e7e5e4" fontFamily="ui-sans-serif, system-ui">Honeypot</text>
+
+      <rect x="440" y="300" width="30" height="20" rx="3" fill="#1c1917" stroke="#57534e" strokeWidth="1.5" />
+      <circle cx="470" cy="310" r="7" fill="#3f3d38" stroke="#78716c" strokeWidth="1.5" />
+      <circle cx="470" cy="310" r="3" fill="#93c5fd" opacity="0.6" />
+      <text x="455" y="335" fontSize="10" textAnchor="middle" fill="#e7e5e4" fontFamily="ui-sans-serif, system-ui">Camera</text>
+
+      <rect x="495" y="295" width="12" height="26" rx="6" fill="#1c1917" stroke="#57534e" strokeWidth="1.5" />
+      <line x1="501" y1="321" x2="501" y2="332" stroke="#57534e" strokeWidth="2" />
+      <text x="501" y="345" fontSize="10" textAnchor="middle" fill="#e7e5e4" fontFamily="ui-sans-serif, system-ui">Mic</text>
+    </svg>
+  );
+}
+
+function SceneMount() {
+  return (
+    <svg viewBox="0 0 640 420" className="w-full h-auto max-w-3xl mx-auto" role="img" aria-label="Sketch of the honeypot being mounted onto a post in the ground">
+      {sceneBackdrop()}
+      <ellipse cx="320" cy="356" rx="140" ry="14" fill="#000000" opacity="0.25" />
+
+      <rect x="310" y="180" width="20" height="176" rx="4" fill="#8a6239" />
+      <rect x="317" y="180" width="6" height="176" fill="#6b4a28" opacity="0.5" />
+
+      <path d="M320,110 L400,110 A80,26 0 0,1 320,136 A80,26 0 0,1 240,110 A80,26 0 0,1 320,84 Z" fill="#b3462c" opacity="0.9" />
+      <ellipse cx="320" cy="110" rx="80" ry="26" fill="none" stroke="#1c1a16" strokeWidth="2" />
+      <rect x="270" y="55" width="6" height="55" fill="#a97c4f" />
+      <rect x="366" y="55" width="6" height="55" fill="#a97c4f" />
+      <polygon points="320,20 320,55 400,55" fill="#284a30" />
+      <polygon points="320,20 240,55 320,55" fill="#3f6b4f" />
+      <polygon points="320,20 400,55 320,68 240,55" fill="none" stroke="#1c2e20" strokeWidth="1.5" />
+
+      <path d="M215,90 q-16,20 0,45" stroke="#a8a29e" strokeWidth="2" fill="none" />
+      <path d="M425,90 q16,20 0,45" stroke="#a8a29e" strokeWidth="2" fill="none" />
+
+      <circle cx="320" cy="178" r="5" fill="none" stroke="#e7e5e4" strokeWidth="1.5" />
+      <line x1="320" y1="173" x2="320" y2="183" stroke="#e7e5e4" strokeWidth="1.5" />
+      <line x1="315" y1="178" x2="325" y2="178" stroke="#e7e5e4" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function SceneSensors() {
+  return (
+    <svg viewBox="0 0 640 420" className="w-full h-auto max-w-3xl mx-auto" role="img" aria-label="Sketch of external cameras and microphones being placed around the mounted honeypot">
+      {sceneBackdrop()}
+      <ellipse cx="320" cy="356" rx="150" ry="15" fill="#000000" opacity="0.25" />
+
+      <rect x="310" y="270" width="20" height="70" rx="3" fill="#8a6239" />
+      <path d="M320,220 L370,220 A50,16 0 0,1 320,236 A50,16 0 0,1 270,220 A50,16 0 0,1 320,204 Z" fill="#b3462c" />
+      <polygon points="320,170 270,200 370,200" fill="#3f6b4f" stroke="#1c2e20" strokeWidth="1.5" />
+
+      <line x1="140" y1="340" x2="140" y2="270" stroke="#57534e" strokeWidth="3" />
+      <rect x="126" y="250" width="28" height="20" rx="3" fill="#1c1917" stroke="#78716c" strokeWidth="1.5" />
+      <circle cx="140" cy="260" r="6" fill="#3f3d38" />
+      <line x1="154" y1="260" x2="270" y2="222" stroke="#a8a29e" strokeWidth="1" strokeDasharray="4 5" opacity="0.6" />
+
+      <line x1="500" y1="340" x2="500" y2="270" stroke="#57534e" strokeWidth="3" />
+      <rect x="486" y="250" width="28" height="20" rx="3" fill="#1c1917" stroke="#78716c" strokeWidth="1.5" />
+      <circle cx="500" cy="260" r="6" fill="#3f3d38" />
+      <line x1="486" y1="260" x2="370" y2="222" stroke="#a8a29e" strokeWidth="1" strokeDasharray="4 5" opacity="0.6" />
+
+      <line x1="220" y1="356" x2="220" y2="300" stroke="#57534e" strokeWidth="2.5" />
+      <rect x="214" y="286" width="12" height="18" rx="6" fill="#1c1917" stroke="#78716c" strokeWidth="1.5" />
+      <line x1="420" y1="356" x2="420" y2="300" stroke="#57534e" strokeWidth="2.5" />
+      <rect x="414" y="286" width="12" height="18" rx="6" fill="#1c1917" stroke="#78716c" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function SceneData() {
+  return (
+    <svg viewBox="0 0 640 420" className="w-full h-auto max-w-3xl mx-auto" role="img" aria-label="Sketch of a tablet displaying live visit data with the honeypot in the background">
+      {sceneBackdrop()}
+      <ellipse cx="320" cy="356" rx="150" ry="15" fill="#000000" opacity="0.25" />
+
+      <g opacity="0.75">
+        <rect x="470" y="240" width="14" height="60" rx="2" fill="#8a6239" />
+        <path d="M477,200 L512,200 A35,12 0 0,1 477,212 A35,12 0 0,1 442,200 A35,12 0 0,1 477,188 Z" fill="#b3462c" />
+        <polygon points="477,160 442,182 512,182" fill="#3f6b4f" />
+      </g>
+
+      <path d="M440,220 q-40,-10 -80,20" stroke="#34d399" strokeWidth="2" fill="none" opacity="0.7">
+        <animate attributeName="opacity" values="0.7;0.1;0.7" dur="2s" repeatCount="indefinite" />
+      </path>
+      <path d="M440,230 q-60,0 -110,45" stroke="#34d399" strokeWidth="2" fill="none" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.05;0.5" dur="2s" begin="0.4s" repeatCount="indefinite" />
+      </path>
+
+      <rect x="150" y="230" width="130" height="90" rx="10" fill="#1c1917" stroke="#57534e" strokeWidth="2" />
+      <rect x="160" y="240" width="110" height="70" rx="4" fill="#0c1f18" />
+      <rect x="172" y="288" width="10" height="14" fill="#34d399" />
+      <rect x="188" y="278" width="10" height="24" fill="#34d399" />
+      <rect x="204" y="266" width="10" height="36" fill="#34d399" />
+      <rect x="220" y="272" width="10" height="30" fill="#34d399" />
+      <path d="M172,262 L188,250 L204,254 L220,244 L240,248" stroke="#6ee7b7" strokeWidth="2" fill="none" />
+
+      <line x1="180" y1="320" x2="160" y2="356" stroke="#57534e" strokeWidth="3" />
+      <line x1="250" y1="320" x2="270" y2="356" stroke="#57534e" strokeWidth="3" />
+    </svg>
+  );
+}
+
+const SETUP_STEPS = [
+  { title: '1. Pack the Kit', description: 'Open the field pack to reveal the honeypot, camera, and microphone.', render: SceneKit },
+  { title: '2. Mount the Honeypot', description: 'Lower the assembled honeypot onto its post, tree mount, or ground stake.', render: SceneMount },
+  { title: '3. Deploy the Sensors', description: 'Place external cameras and microphones around the perimeter.', render: SceneSensors },
+  { title: '4. Collect the Data', description: 'High-confidence visits start streaming to the dashboard.', render: SceneData },
+];
+
+function SetupAnimation() {
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setStep((s) => (s + 1) % SETUP_STEPS.length), 4000);
+    return () => clearInterval(id);
+  }, []);
+
+  const Current = SETUP_STEPS[step].render;
+
+  return (
+    <div>
+      <div key={step} className="fade-slide-in">
+        <Current />
+        <div className="text-center mt-2">
+          <div className="text-sm font-bold text-emerald-300">{SETUP_STEPS[step].title}</div>
+          <div className="text-xs text-stone-500 mt-1">{SETUP_STEPS[step].description}</div>
+        </div>
+      </div>
+      <div className="flex justify-center gap-1.5 mt-4">
+        {SETUP_STEPS.map((s, i) => (
+          <button
+            key={s.title}
+            onClick={() => setStep(i)}
+            aria-label={`Go to ${s.title}`}
+            className={`h-1.5 rounded-full transition-all ${i === step ? 'w-6 bg-emerald-500' : 'w-1.5 bg-stone-700 hover:bg-stone-600'}`}
+          />
+        ))}
+      </div>
+    </div>
   );
 }
 
