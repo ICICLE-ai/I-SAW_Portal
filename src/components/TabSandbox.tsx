@@ -1,16 +1,23 @@
 import React, { useMemo, useState } from 'react';
 import {
+  Activity,
   AlertTriangle,
   Anchor,
   Battery,
   Bell,
   Camera,
   ChevronDown,
+  Crosshair,
   Droplets,
   Eye,
   Filter,
   Footprints,
+  Hand,
   Mic,
+  Navigation,
+  Network,
+  PlaneTakeoff,
+  Power,
   Radio,
   RefreshCw,
   Signpost,
@@ -202,11 +209,14 @@ export function TabSandbox() {
           <div className="inline-flex self-start md:self-auto bg-stone-900/80 border border-stone-800 rounded-2xl p-1 gap-1">
             <SubTabButton label="The Smart Honeypot" active={subTab === 'honeypot'} onClick={() => setSubTab('honeypot')} />
             <SubTabButton label="Analytics" active={subTab === 'analytics'} onClick={() => setSubTab('analytics')} />
+            <SubTabButton label="Gesture Drone Control" active={subTab === 'gesture-drone'} onClick={() => setSubTab('gesture-drone')} />
           </div>
         </div>
 
         <div key={subTab} className="fade-slide-in flex flex-col gap-6">
-          {subTab === 'honeypot' ? <HoneypotView /> : <AnalyticsView />}
+          {subTab === 'honeypot' && <HoneypotView />}
+          {subTab === 'analytics' && <AnalyticsView />}
+          {subTab === 'gesture-drone' && <GestureDroneView />}
         </div>
       </div>
     </motion.section>
@@ -744,6 +754,97 @@ function AlertCard({ icon, title, description, severity }) {
       <div>
         <h4 className={`text-sm font-semibold mb-1 ${styles.title}`}>{title}</h4>
         <p className="text-xs text-stone-400 leading-relaxed">{description}</p>
+      </div>
+    </div>
+  );
+}function GestureDroneView() {
+  const actions = [
+    { gesture: "Open Palm", command: "Hover / Lock", icon: <Hand className="w-5 h-5 text-indigo-400" /> },
+    { gesture: "Fist", command: "Land", icon: <ChevronDown className="w-5 h-5 text-indigo-400" /> },
+    { gesture: "Point Up", command: "Ascend", icon: <TrendingUp className="w-5 h-5 text-indigo-400" /> },
+    { gesture: "Directional", command: "Vector Flight", icon: <Navigation className="w-5 h-5 text-indigo-400" /> },
+  ];
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="bg-stone-900/80 border border-indigo-500/30 rounded-3xl p-8 relative overflow-hidden shadow-lg shadow-indigo-900/5">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+        <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start">
+          <div className="flex-1">
+            <h3 className="text-3xl font-bold text-stone-50 tracking-tight mb-2 flex items-center gap-3">
+              <Crosshair className="w-8 h-8 text-indigo-400" />
+              AI Gesture-Controlled Drone Teleoperation
+            </h3>
+            <p className="text-indigo-300 font-medium tracking-wide text-sm mb-6 uppercase">
+              Hands-Free UAV Navigation for Field Researchers &amp; Wildlife Monitoring
+            </p>
+            <div className="space-y-4">
+              <div className="bg-stone-950/50 p-5 rounded-2xl border border-stone-800 hover:border-indigo-500/30 transition-colors">
+                <h4 className="text-sm font-bold text-stone-200 mb-2 flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-emerald-400" /> Real-Time Detection Engine
+                </h4>
+                <p className="text-xs text-stone-400 leading-relaxed">
+                  Powered by optimized YOLO vision models and MediaPipe pipelines (<code className="text-emerald-400 font-mono">realtime_detection.py</code>) for low-latency hand tracking.
+                </p>
+              </div>
+              <div className="bg-stone-950/50 p-5 rounded-2xl border border-stone-800 hover:border-indigo-500/30 transition-colors">
+                <h4 className="text-sm font-bold text-stone-200 mb-2 flex items-center gap-2">
+                  <Network className="w-4 h-4 text-emerald-400" /> Dynamic Action Mapping
+                </h4>
+                <p className="text-xs text-stone-400 leading-relaxed">
+                  Translates real-time static &amp; dynamic hand gestures (<code className="text-emerald-400 font-mono">actions.json</code>) into drone flight commands (e.g., Takeoff, Land, Vector Direction, Hover/Lock, Camera Tilt).
+                </p>
+              </div>
+              <div className="bg-stone-950/50 p-5 rounded-2xl border border-stone-800 hover:border-indigo-500/30 transition-colors">
+                <h4 className="text-sm font-bold text-stone-200 mb-2 flex items-center gap-2">
+                  <Crosshair className="w-4 h-4 text-emerald-400" /> High-Precision Model Metrics
+                </h4>
+                <p className="text-xs text-stone-400 leading-relaxed">
+                  Built on validated YOLO detection runs with optimized Box Precision-Recall (BoxPR) and F1-score performance for outdoor field environments.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex-1 w-full space-y-6">
+            <div className="bg-stone-950/80 border border-indigo-500/20 rounded-3xl p-6">
+              <h4 className="text-xs font-bold text-stone-500 uppercase tracking-widest mb-4">Interactive Command Matrix</h4>
+              <div className="grid grid-cols-2 gap-3">
+                {actions.map((act, i) => (
+                  <div key={i} className="bg-indigo-950/20 border border-indigo-500/20 p-4 rounded-xl flex items-center gap-4 hover:border-indigo-500/50 transition-all hover:scale-[1.02]">
+                    <div className="p-3 bg-indigo-950/60 rounded-xl shadow-inner border border-indigo-500/10">{act.icon}</div>
+                    <div>
+                      <div className="text-[10px] text-stone-400 uppercase font-bold tracking-widest mb-1">{act.gesture}</div>
+                      <div className="text-sm text-stone-100 font-semibold">{act.command}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-stone-950/80 border border-indigo-500/20 rounded-3xl p-6">
+              <h4 className="text-xs font-bold text-stone-500 uppercase tracking-widest mb-4">Technical Specs &amp; Performance</h4>
+              <ul className="space-y-4">
+                <li className="flex justify-between items-center text-sm border-b border-stone-800/50 pb-3">
+                  <span className="text-stone-400">Detection Engine</span>
+                  <span className="font-mono text-indigo-300 text-xs font-semibold bg-indigo-950/30 px-2 py-1 rounded border border-indigo-500/20">YOLOv8 / MediaPipe</span>
+                </li>
+                <li className="flex justify-between items-center text-sm border-b border-stone-800/50 pb-3">
+                  <span className="text-stone-400">Control Latency</span>
+                  <span className="font-mono text-emerald-400 text-xs font-bold flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> &lt; 50ms</span>
+                </li>
+                <li className="flex justify-between items-center text-sm border-b border-stone-800/50 pb-3">
+                  <span className="text-stone-400">Action Config</span>
+                  <span className="font-mono text-indigo-300 text-xs font-semibold">actions.json</span>
+                </li>
+                <li className="flex justify-between items-center text-sm">
+                  <span className="text-stone-400">Deployment Field</span>
+                  <span className="font-mono text-indigo-300 text-xs font-semibold">Touchless Aerial Monitoring</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
