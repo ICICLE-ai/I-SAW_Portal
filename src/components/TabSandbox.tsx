@@ -364,7 +364,7 @@ function HoneypotView() {
 
 const HONEYPOT_SLIDES = [
   { title: 'Structure Sketch', caption: 'A realistic look at the honeypot in the field, showing the open interior, footfall sensors, and alternating trays.' },
-  { title: 'Setup Walkthrough', caption: 'An animated, step-by-step look at how a counselor sets up a honeypot in the field.' },
+  { title: 'Setup Walkthrough', caption: 'A step-by-step look at how a counselor sets up a honeypot and starts collecting data, short-term and long-term.' },
 ];
 
 function HoneypotSlideshow() {
@@ -429,68 +429,129 @@ function sceneBackdrop() {
   );
 }
 
+function Bird({ x, y, scale = 1, color = '#a3352b', flip = false }) {
+  return (
+    <g transform={`translate(${x} ${y}) scale(${flip ? -scale : scale} ${scale})`}>
+      <path d="M-3,0 q-7,-5 -11,1" stroke={color} strokeWidth="2" fill="none" opacity="0.85" strokeLinecap="round" />
+      <ellipse cx="0" cy="0" rx="9" ry="6" fill={color} />
+      <circle cx="8" cy="-5" r="4" fill={color} />
+      <polygon points="12,-5 19,-3.5 12,-2" fill="#d19a3d" />
+    </g>
+  );
+}
+
+function buildTrayRing(cx = 320, cy = 300, rx = 180, ry = 58, irx = 100, iry = 32) {
+  const point = (deg, R, r) => {
+    const rad = (deg * Math.PI) / 180;
+    return `${(cx + R * Math.cos(rad)).toFixed(1)},${(cy + r * Math.sin(rad)).toFixed(1)}`;
+  };
+  const segments = [];
+  for (let i = 0; i < 6; i++) {
+    const a0 = -90 + i * 60;
+    const a1 = a0 + 60;
+    const d = `M${point(a0, rx, ry)} A${rx},${ry} 0 0 1 ${point(a1, rx, ry)} L${point(a1, irx, iry)} A${irx},${iry} 0 0 0 ${point(a0, irx, iry)} Z`;
+    segments.push({ d, color: i % 2 === 0 ? 'url(#nectarGrad)' : 'url(#seedGrad)' });
+  }
+  return segments;
+}
+
 function HoneypotSketch() {
   return (
     <svg viewBox="0 0 640 420" className="w-full h-auto max-w-3xl mx-auto" role="img" aria-label="Realistic illustration of the honeypot feeder, showing the open interior, footfall sensors, and alternating seed and nectar trays">
+      <defs>
+        <radialGradient id="nectarGrad" cx="35%" cy="28%" r="80%">
+          <stop offset="0%" stopColor="#e8845f" />
+          <stop offset="45%" stopColor="#b3462c" />
+          <stop offset="100%" stopColor="#651f13" />
+        </radialGradient>
+        <radialGradient id="seedGrad" cx="35%" cy="28%" r="80%">
+          <stop offset="0%" stopColor="#e6c48a" />
+          <stop offset="45%" stopColor="#c99a52" />
+          <stop offset="100%" stopColor="#6e4b22" />
+        </radialGradient>
+      </defs>
       {sceneBackdrop()}
-      <ellipse cx="320" cy="340" rx="190" ry="20" fill="#000000" opacity="0.3" />
+      <ellipse cx="320" cy="352" rx="195" ry="22" fill="#000000" opacity="0.32" />
 
-      <path d="M320,300 L500,300 A180,58 0 0,1 410,352 Z" fill="#b3462c" />
-      <path d="M320,300 L410,352 A180,58 0 0,1 230,352 Z" fill="#c99a52" />
-      <path d="M320,300 L230,352 A180,58 0 0,1 140,300 Z" fill="#b3462c" />
-      <path d="M320,300 L140,300 A180,58 0 0,1 230,248 Z" fill="#c99a52" />
-      <path d="M320,300 L230,248 A180,58 0 0,1 410,248 Z" fill="#b3462c" />
-      <path d="M320,300 L410,248 A180,58 0 0,1 500,300 Z" fill="#c99a52" />
+      {/* solid base skirt so the structure reads as grounded, not floating */}
+      <ellipse cx="320" cy="344" rx="184" ry="20" fill="#161410" />
+
+      {/* tray, drawn as a ring/trough of alternating seed & nectar bins, each bin individually shaded for depth */}
+      {buildTrayRing().map((seg, i) => (
+        <path key={i} d={seg.d} fill={seg.color} />
+      ))}
+      {/* radial divider lines between bins, so each trough reads as a distinct concave section */}
+      {[0, 60, 120, 180, 240, 300].map((deg) => {
+        const rad = (deg * Math.PI) / 180;
+        const x1 = 320 + 48 * Math.cos(rad);
+        const y1 = 300 + 16 * Math.sin(rad);
+        const x2 = 320 + 180 * Math.cos(rad);
+        const y2 = 300 + 58 * Math.sin(rad);
+        return <line key={deg} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#00000055" strokeWidth="1.5" />;
+      })}
+      {/* shading for depth: a shadow toward the hollow center, a highlight along the outer rim */}
+      <ellipse cx="320" cy="300" rx="62" ry="21" fill="none" stroke="#000000" strokeWidth="18" opacity="0.32" />
+      <ellipse cx="320" cy="300" rx="172" ry="55" fill="none" stroke="#fff7ed" strokeWidth="7" opacity="0.16" />
       <ellipse cx="320" cy="300" rx="180" ry="58" fill="none" stroke="#1c1a16" strokeWidth="3" />
-      <g fill="#7a5325" opacity="0.7">
-        <circle cx="250" cy="330" r="2" /><circle cx="258" cy="336" r="2" /><circle cx="266" cy="326" r="2" />
-        <circle cx="380" cy="330" r="2" /><circle cx="388" cy="322" r="2" /><circle cx="372" cy="338" r="2" />
-      </g>
-      <ellipse cx="460" cy="312" rx="18" ry="6" fill="#e8735a" opacity="0.6" />
-      <ellipse cx="180" cy="312" rx="18" ry="6" fill="#e8735a" opacity="0.6" />
+      <ellipse cx="320" cy="300" rx="48" ry="16" fill="#1c1a16" />
+      <ellipse cx="320" cy="300" rx="48" ry="16" fill="none" stroke="#0f0d0b" strokeWidth="2" />
 
+      {/* pillars, each with a small contact shadow so they read as resting on the tray rim, not floating.
+          The two middle pillars sit near true center but at clearly different depths (back, front) to
+          match an accurate 3/4 perspective, rather than being pushed out toward the sides. */}
+      <ellipse cx="206" cy="301" rx="10" ry="4" fill="#161410" opacity="0.55" />
       <rect x="200" y="150" width="12" height="150" rx="4" fill="#a97c4f" />
       <rect x="207" y="150" width="4" height="150" fill="#7c5a37" opacity="0.5" />
-      <rect x="260" y="165" width="10" height="140" rx="4" fill="#a97c4f" />
-      <rect x="378" y="165" width="10" height="140" rx="4" fill="#a97c4f" />
+
+      <ellipse cx="300" cy="250" rx="8" ry="3.5" fill="#161410" opacity="0.55" />
+      <rect x="296" y="180" width="8" height="70" rx="4" fill="#a97c4f" opacity="0.9" />
+
+      <ellipse cx="342" cy="355" rx="10" ry="4" fill="#161410" opacity="0.55" />
+      <rect x="338" y="185" width="9" height="170" rx="4" fill="#a97c4f" />
+
+      <ellipse cx="438" cy="301" rx="10" ry="4" fill="#161410" opacity="0.55" />
       <rect x="432" y="150" width="12" height="150" rx="4" fill="#a97c4f" />
       <rect x="439" y="150" width="4" height="150" fill="#7c5a37" opacity="0.5" />
 
-      <polygon points="320,60 320,160 470,160" fill="#284a30" />
-      <polygon points="320,60 170,160 320,160" fill="#3f6b4f" />
-      <polygon points="320,60 470,160 320,185 170,160" fill="none" stroke="#1c2e20" strokeWidth="2" strokeLinejoin="round" />
-      <g stroke="#1c2e20" strokeWidth="1" opacity="0.4">
+      {/* header beam connecting pillar tops for a finished, structural look */}
+      <path d="M200,159 Q320,148 444,159" stroke="#6b4a28" strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.8" />
+
+      {/* hip roof, two faces, with eaves overhang */}
+      <polygon points="320,58 320,160 480,166" fill="#22402a" />
+      <polygon points="320,58 160,166 320,160" fill="#3f6b4f" />
+      <polygon points="320,58 480,166 320,188 160,166" fill="none" stroke="#16281c" strokeWidth="2.5" strokeLinejoin="round" />
+      <g stroke="#16281c" strokeWidth="1" opacity="0.35">
         <line x1="200" y1="140" x2="230" y2="128" /><line x1="220" y1="150" x2="250" y2="138" />
         <line x1="420" y1="140" x2="450" y2="128" opacity="0.25" /><line x1="400" y1="150" x2="430" y2="138" opacity="0.25" />
       </g>
 
+      {/* single, clean hanging loop */}
       <circle cx="320" cy="44" r="7" fill="none" stroke="#78716c" strokeWidth="3" />
-      <line x1="320" y1="51" x2="320" y2="60" stroke="#78716c" strokeWidth="3" />
+      <line x1="320" y1="51" x2="320" y2="58" stroke="#78716c" strokeWidth="3" />
 
       <rect x="352" y="70" width="10" height="18" rx="4" fill="#292524" />
-      <circle cx="357" cy="72" r="3" fill="#57534e" />
 
-      <line x1="160" y1="215" x2="480" y2="215" stroke="#dcd3c4" strokeWidth="1.5" strokeDasharray="5 6" opacity="0.55" />
+      <line x1="160" y1="215" x2="480" y2="215" stroke="#dcd3c4" strokeWidth="1.5" strokeDasharray="5 6" opacity="0.5" />
 
+      {/* perches + birds for scale */}
       <rect x="180" y="272" width="26" height="6" rx="3" fill="#8a6239" />
       <rect x="446" y="272" width="26" height="6" rx="3" fill="#8a6239" />
-      <ellipse cx="466" cy="262" rx="12" ry="8" fill="#a3352b" />
-      <circle cx="476" cy="256" r="4.5" fill="#a3352b" />
-      <polygon points="480,256 488,254 480,259" fill="#d19a3d" />
+      <Bird x={468} y={262} scale={1.1} color="#a3352b" flip />
+      <Bird x={196} y={264} scale={0.85} color="#57534e" />
 
-      <ellipse cx="206" cy="278" rx="7" ry="3" fill="#1c1917" />
+      {/* footfall sensors, single clean pulse each */}
       <circle cx="206" cy="278" r="3" fill="#34d399" />
       <circle cx="206" cy="278" r="3" fill="none" stroke="#34d399" strokeWidth="1.5">
         <animate attributeName="r" values="3;10;3" dur="2.4s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.8;0;0.8" dur="2.4s" repeatCount="indefinite" />
       </circle>
-      <ellipse cx="446" cy="278" rx="7" ry="3" fill="#1c1917" />
       <circle cx="446" cy="278" r="3" fill="#34d399" />
       <circle cx="446" cy="278" r="3" fill="none" stroke="#34d399" strokeWidth="1.5">
         <animate attributeName="r" values="3;10;3" dur="2.4s" begin="1.2s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.8;0;0.8" dur="2.4s" begin="1.2s" repeatCount="indefinite" />
       </circle>
 
+      {/* labels */}
       <line x1="357" y1="72" x2="420" y2="46" stroke="#a8a29e" strokeWidth="1" />
       <text x="424" y="50" fontSize="11" fill="#e7e5e4" fontFamily="ui-sans-serif, system-ui">On-feeder microphone</text>
 
@@ -531,6 +592,9 @@ function SceneKit() {
       <rect x="495" y="295" width="12" height="26" rx="6" fill="#1c1917" stroke="#57534e" strokeWidth="1.5" />
       <line x1="501" y1="321" x2="501" y2="332" stroke="#57534e" strokeWidth="2" />
       <text x="501" y="345" fontSize="10" textAnchor="middle" fill="#e7e5e4" fontFamily="ui-sans-serif, system-ui">Mic</text>
+
+      {/* a curious bird watching from the bushes */}
+      <Bird x={555} y={300} scale={0.8} color="#57534e" flip />
     </svg>
   );
 }
@@ -558,50 +622,108 @@ function SceneMount() {
       <circle cx="320" cy="178" r="5" fill="none" stroke="#e7e5e4" strokeWidth="1.5" />
       <line x1="320" y1="173" x2="320" y2="183" stroke="#e7e5e4" strokeWidth="1.5" />
       <line x1="315" y1="178" x2="325" y2="178" stroke="#e7e5e4" strokeWidth="1.5" />
+
+      {/* a bird watching the install from the tree line */}
+      <Bird x={110} y={300} scale={0.85} color="#a3352b" />
     </svg>
   );
 }
 
 function SceneSensors() {
+  const onlineDot = (x, y, delay = '0s') => (
+    <g>
+      <circle cx={x} cy={y} r="3.2" fill="#10b981" />
+      <circle cx={x} cy={y} r="3.2" fill="none" stroke="#10b981" strokeWidth="1.5">
+        <animate attributeName="r" values="3.2;9;3.2" dur="2s" begin={delay} repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.8;0;0.8" dur="2s" begin={delay} repeatCount="indefinite" />
+      </circle>
+    </g>
+  );
+
   return (
-    <svg viewBox="0 0 640 420" className="w-full h-auto max-w-3xl mx-auto" role="img" aria-label="Sketch of external cameras and microphones being placed around the mounted honeypot">
+    <svg viewBox="0 0 640 420" className="w-full h-auto max-w-3xl mx-auto" role="img" aria-label="Sketch of external cameras and microphones confirming they are online and covering the honeypot from every side">
       {sceneBackdrop()}
       <ellipse cx="320" cy="356" rx="150" ry="15" fill="#000000" opacity="0.25" />
+
+      {/* dashed coverage ring showing the full-perimeter array */}
+      <ellipse cx="320" cy="286" rx="235" ry="118" fill="none" stroke="#34d399" strokeWidth="1.5" strokeDasharray="7 8" opacity="0.35" />
+
+      {/* full-coverage confirmation badge */}
+      <circle cx="292" cy="130" r="8" fill="none" stroke="#34d399" strokeWidth="2" />
+      <path d="M288,130 l3,3 l6,-7" stroke="#34d399" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <text x="308" y="134" fontSize="12" fill="#6ee7b7" fontFamily="ui-sans-serif, system-ui">All sensors online &middot; full coverage confirmed</text>
 
       <rect x="310" y="270" width="20" height="70" rx="3" fill="#8a6239" />
       <path d="M320,220 L370,220 A50,16 0 0,1 320,236 A50,16 0 0,1 270,220 A50,16 0 0,1 320,204 Z" fill="#b3462c" />
       <polygon points="320,170 270,200 370,200" fill="#3f6b4f" stroke="#1c2e20" strokeWidth="1.5" />
 
+      {/* a bird already checking out the freshly mounted honeypot */}
+      <Bird x={345} y={186} scale={0.9} color="#a3352b" />
+
+      {/* camera 1, left */}
       <line x1="140" y1="340" x2="140" y2="270" stroke="#57534e" strokeWidth="3" />
       <rect x="126" y="250" width="28" height="20" rx="3" fill="#1c1917" stroke="#78716c" strokeWidth="1.5" />
       <circle cx="140" cy="260" r="6" fill="#3f3d38" />
-      <line x1="154" y1="260" x2="270" y2="222" stroke="#a8a29e" strokeWidth="1" strokeDasharray="4 5" opacity="0.6" />
+      <line x1="154" y1="260" x2="315" y2="222" stroke="#a8a29e" strokeWidth="1" strokeDasharray="4 5" opacity="0.6" />
+      {onlineDot(140, 244, '0s')}
 
+      {/* camera 2, right */}
       <line x1="500" y1="340" x2="500" y2="270" stroke="#57534e" strokeWidth="3" />
       <rect x="486" y="250" width="28" height="20" rx="3" fill="#1c1917" stroke="#78716c" strokeWidth="1.5" />
       <circle cx="500" cy="260" r="6" fill="#3f3d38" />
-      <line x1="486" y1="260" x2="370" y2="222" stroke="#a8a29e" strokeWidth="1" strokeDasharray="4 5" opacity="0.6" />
+      <line x1="486" y1="260" x2="325" y2="222" stroke="#a8a29e" strokeWidth="1" strokeDasharray="4 5" opacity="0.6" />
+      {onlineDot(500, 244, '0.4s')}
 
+      {/* mic 1, left */}
       <line x1="220" y1="356" x2="220" y2="300" stroke="#57534e" strokeWidth="2.5" />
       <rect x="214" y="286" width="12" height="18" rx="6" fill="#1c1917" stroke="#78716c" strokeWidth="1.5" />
+      <line x1="220" y1="286" x2="308" y2="235" stroke="#a8a29e" strokeWidth="1" strokeDasharray="4 5" opacity="0.5" />
+      {onlineDot(220, 280, '0.8s')}
+
+      {/* mic 2, center-front */}
+      <line x1="320" y1="356" x2="320" y2="300" stroke="#57534e" strokeWidth="2.5" />
+      <rect x="314" y="286" width="12" height="18" rx="6" fill="#1c1917" stroke="#78716c" strokeWidth="1.5" />
+      <line x1="320" y1="286" x2="320" y2="238" stroke="#a8a29e" strokeWidth="1" strokeDasharray="4 5" opacity="0.5" />
+      {onlineDot(320, 280, '1.2s')}
+
+      {/* mic 3, right */}
       <line x1="420" y1="356" x2="420" y2="300" stroke="#57534e" strokeWidth="2.5" />
       <rect x="414" y="286" width="12" height="18" rx="6" fill="#1c1917" stroke="#78716c" strokeWidth="1.5" />
+      <line x1="420" y1="286" x2="332" y2="235" stroke="#a8a29e" strokeWidth="1" strokeDasharray="4 5" opacity="0.5" />
+      {onlineDot(420, 280, '1.6s')}
     </svg>
   );
 }
 
-function SceneData() {
+function SceneShortTerm() {
   return (
-    <svg viewBox="0 0 640 420" className="w-full h-auto max-w-3xl mx-auto" role="img" aria-label="Sketch of a tablet displaying live visit data with the honeypot in the background">
+    <svg viewBox="0 0 640 420" className="w-full h-auto max-w-3xl mx-auto" role="img" aria-label="Sketch of the honeypot's sensors actively detecting a bird while a tablet shows a live incoming feed">
       {sceneBackdrop()}
       <ellipse cx="320" cy="356" rx="150" ry="15" fill="#000000" opacity="0.25" />
 
-      <g opacity="0.75">
+      {/* honeypot, background */}
+      <g opacity="0.85">
         <rect x="470" y="240" width="14" height="60" rx="2" fill="#8a6239" />
         <path d="M477,200 L512,200 A35,12 0 0,1 477,212 A35,12 0 0,1 442,200 A35,12 0 0,1 477,188 Z" fill="#b3462c" />
         <polygon points="477,160 442,182 512,182" fill="#3f6b4f" />
       </g>
 
+      {/* a bird actively feeding, triggering the footfall sensor */}
+      <Bird x={465} y={192} scale={0.9} color="#a3352b" flip />
+      <circle cx="479" cy="199" r="3" fill="none" stroke="#34d399" strokeWidth="1.5">
+        <animate attributeName="r" values="3;9;3" dur="1.6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.9;0;0.9" dur="1.6s" repeatCount="indefinite" />
+      </circle>
+
+      {/* camera actively recording */}
+      <rect x="380" y="255" width="26" height="18" rx="3" fill="#1c1917" stroke="#78716c" strokeWidth="1.5" />
+      <circle cx="406" cy="264" r="5" fill="#3f3d38" />
+      <circle cx="392" cy="252" r="3" fill="#ef4444">
+        <animate attributeName="opacity" values="1;0.2;1" dur="1s" repeatCount="indefinite" />
+      </circle>
+      <text x="392" y="245" fontSize="9" textAnchor="middle" fill="#fca5a5" fontFamily="ui-sans-serif, system-ui">REC</text>
+
+      {/* signal arcs from honeypot toward the tablet */}
       <path d="M440,220 q-40,-10 -80,20" stroke="#34d399" strokeWidth="2" fill="none" opacity="0.7">
         <animate attributeName="opacity" values="0.7;0.1;0.7" dur="2s" repeatCount="indefinite" />
       </path>
@@ -609,16 +731,70 @@ function SceneData() {
         <animate attributeName="opacity" values="0.5;0.05;0.5" dur="2s" begin="0.4s" repeatCount="indefinite" />
       </path>
 
+      {/* tablet, live feed */}
       <rect x="150" y="230" width="130" height="90" rx="10" fill="#1c1917" stroke="#57534e" strokeWidth="2" />
       <rect x="160" y="240" width="110" height="70" rx="4" fill="#0c1f18" />
+      <circle cx="167" cy="248" r="3" fill="#ef4444">
+        <animate attributeName="opacity" values="1;0.2;1" dur="1s" repeatCount="indefinite" />
+      </circle>
+      <text x="176" y="251" fontSize="9" fill="#fca5a5" fontFamily="ui-sans-serif, system-ui">LIVE</text>
       <rect x="172" y="288" width="10" height="14" fill="#34d399" />
       <rect x="188" y="278" width="10" height="24" fill="#34d399" />
       <rect x="204" y="266" width="10" height="36" fill="#34d399" />
       <rect x="220" y="272" width="10" height="30" fill="#34d399" />
-      <path d="M172,262 L188,250 L204,254 L220,244 L240,248" stroke="#6ee7b7" strokeWidth="2" fill="none" />
 
       <line x1="180" y1="320" x2="160" y2="356" stroke="#57534e" strokeWidth="3" />
       <line x1="250" y1="320" x2="270" y2="356" stroke="#57534e" strokeWidth="3" />
+    </svg>
+  );
+}
+
+function SceneLongTerm() {
+  const heat = [
+    0.2, 0.3, 0.5, 0.7, 0.6, 0.4, 0.2,
+    0.3, 0.5, 0.8, 0.9, 0.7, 0.5, 0.3,
+    0.4, 0.6, 0.9, 1.0, 0.8, 0.6, 0.4,
+    0.2, 0.4, 0.6, 0.7, 0.5, 0.3, 0.2,
+  ];
+  return (
+    <svg viewBox="0 0 640 420" className="w-full h-auto max-w-3xl mx-auto" role="img" aria-label="Sketch of a dashboard board showing a heatmap and a rising trend line built from weeks of visits">
+      {sceneBackdrop()}
+      <ellipse cx="320" cy="356" rx="160" ry="15" fill="#000000" opacity="0.25" />
+
+      {/* board on a stand */}
+      <rect x="140" y="100" width="360" height="210" rx="12" fill="#0c1f18" stroke="#57534e" strokeWidth="2" />
+      <text x="320" y="128" fontSize="12" textAnchor="middle" fill="#a7f3d0" fontFamily="ui-sans-serif, system-ui">12 Weeks of Activity</text>
+
+      {/* heatmap grid */}
+      {heat.map((op, i) => {
+        const col = i % 7;
+        const row = Math.floor(i / 7);
+        return (
+          <rect
+            key={i}
+            x={166 + col * 30}
+            y={140 + row * 24}
+            width={26}
+            height={20}
+            rx={3}
+            fill="#10b981"
+            opacity={op}
+          />
+        );
+      })}
+
+      {/* rising trend line beneath the heatmap */}
+      <path d="M166,290 L196,282 L226,270 L256,272 L286,255 L316,248 L346,232 L376,238 L406,215 L436,205 L466,190" stroke="#6ee7b7" strokeWidth="2.5" fill="none" />
+      {[166, 226, 286, 346, 406, 466].map((x, i) => (
+        <circle key={x} cx={x} cy={[290, 270, 255, 232, 215, 190][i]} r="3" fill="#34d399" />
+      ))}
+
+      {/* stand legs */}
+      <line x1="200" y1="310" x2="170" y2="356" stroke="#57534e" strokeWidth="3" />
+      <line x1="440" y1="310" x2="470" y2="356" stroke="#57534e" strokeWidth="3" />
+
+      {/* a bird perched on the frame, watching the trends build */}
+      <Bird x={470} y={95} scale={0.85} color="#57534e" />
     </svg>
   );
 }
@@ -627,16 +803,18 @@ const SETUP_STEPS = [
   { title: '1. Pack the Kit', description: 'Open the field pack to reveal the honeypot, camera, and microphone.', render: SceneKit },
   { title: '2. Mount the Honeypot', description: 'Lower the assembled honeypot onto its post, tree mount, or ground stake.', render: SceneMount },
   { title: '3. Deploy the Sensors', description: 'Place external cameras and microphones around the perimeter.', render: SceneSensors },
-  { title: '4. Collect the Data', description: 'High-confidence visits start streaming to the dashboard.', render: SceneData },
+  { title: '4. Short-Term Data Collection', description: 'The sensors are actively working, confirming each visit as it happens.', render: SceneShortTerm },
+  { title: '5. Long-Term Data Collection', description: 'Weeks of visits build into heatmaps and trend lines you can explore.', render: SceneLongTerm },
 ];
 
 function SetupAnimation() {
   const [step, setStep] = useState(0);
+  const goToStep = (i) => setStep((i + SETUP_STEPS.length) % SETUP_STEPS.length);
 
   useEffect(() => {
-    const id = setInterval(() => setStep((s) => (s + 1) % SETUP_STEPS.length), 4000);
-    return () => clearInterval(id);
-  }, []);
+    const id = setTimeout(() => setStep((s) => (s + 1) % SETUP_STEPS.length), 4000);
+    return () => clearTimeout(id);
+  }, [step]);
 
   const Current = SETUP_STEPS[step].render;
 
@@ -649,15 +827,31 @@ function SetupAnimation() {
           <div className="text-xs text-stone-500 mt-1">{SETUP_STEPS[step].description}</div>
         </div>
       </div>
-      <div className="flex justify-center gap-1.5 mt-4">
-        {SETUP_STEPS.map((s, i) => (
-          <button
-            key={s.title}
-            onClick={() => setStep(i)}
-            aria-label={`Go to ${s.title}`}
-            className={`h-1.5 rounded-full transition-all ${i === step ? 'w-6 bg-emerald-500' : 'w-1.5 bg-stone-700 hover:bg-stone-600'}`}
-          />
-        ))}
+      <div className="flex items-center justify-center gap-3 mt-4">
+        <button
+          onClick={() => goToStep(step - 1)}
+          className="p-1.5 rounded-lg text-stone-500 hover:text-emerald-400 hover:bg-stone-800/60 transition-colors"
+          aria-label="Previous step"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+        <div className="flex items-center gap-1.5">
+          {SETUP_STEPS.map((s, i) => (
+            <button
+              key={s.title}
+              onClick={() => goToStep(i)}
+              aria-label={`Go to ${s.title}`}
+              className={`h-1.5 rounded-full transition-all ${i === step ? 'w-6 bg-emerald-500' : 'w-1.5 bg-stone-700 hover:bg-stone-600'}`}
+            />
+          ))}
+        </div>
+        <button
+          onClick={() => goToStep(step + 1)}
+          className="p-1.5 rounded-lg text-stone-500 hover:text-emerald-400 hover:bg-stone-800/60 transition-colors"
+          aria-label="Next step"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );
