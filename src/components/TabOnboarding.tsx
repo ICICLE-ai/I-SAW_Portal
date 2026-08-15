@@ -65,31 +65,17 @@ function QuickStart() {
     setDownloading(true);
     setTimeout(() => {
       const scriptContent = `#!/bin/bash
-echo "Setting up Gesture-Controlled Drone Module..."
+echo "Setting up I-SAW Backpack Portal..."
 
 # Clone the repository
-git clone https://github.com/ICICLE-ai/high_school_io_2026.git
-cd high_school_io_2026
+git clone https://github.com/xw0108/Backpack.git
+cd Backpack
 
-# Create Dockerfile
-cat << 'EOF' > Dockerfile
-FROM python:3.9-slim
-WORKDIR /app
-RUN apt-get update && apt-get install -y \\
-    libgl1-mesa-glx \\
-    libglib2.0-0 \\
-    && rm -rf /var/lib/apt/lists/*
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-CMD ["python", "main.py"]
-EOF
+echo "Installing dependencies (Test Mode)..."
+./install.sh
 
-echo "Building Docker image..."
-docker build -t gesture-drone-module .
-
-echo "Starting module in test mode..."
-docker run -it --device=/dev/video0:/dev/video0 gesture-drone-module
+echo "Starting Backpack Portal..."
+./start.sh
 `;
 
       const blob = new Blob([scriptContent], { type: 'text/plain' });
@@ -113,9 +99,9 @@ docker run -it --device=/dev/video0:/dev/video0 gesture-drone-module
       transition={{ duration: 0.3 }}
       className="flex flex-col h-full"
     >
-      <h3 className="text-xl font-bold mb-2">Gesture-Controlled Drone Module</h3>
+      <h3 className="text-xl font-bold mb-2">I-SAW Backpack Portal</h3>
       <p className="text-stone-400 text-sm mb-6 max-w-2xl">
-        Control a Parrot Anafi drone with hand gestures — no model training required. Show your hand to a webcam and the app maps what it sees to drone commands defined in a simple config file.
+        Deploy the full field-kit control center and gesture-controlled drone flight system. The script automatically handles environment setup, Python dependencies, and pretrained ONNX models.
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-[300px]">
@@ -123,10 +109,10 @@ docker run -it --device=/dev/video0:/dev/video0 gesture-drone-module
         <div className="bg-stone-950/50 rounded-2xl border border-stone-800 p-6 flex flex-col">
           <h4 className="text-sm font-bold text-stone-200 mb-4 flex items-center gap-2">
             <Package className="w-4 h-4 text-emerald-400" />
-            Quick Setup (Docker)
+            Quick Setup (Linux x86_64)
           </h4>
           <p className="text-xs text-stone-400 mb-4">
-            Download the deployment script on the right, which will automatically fetch the source code, build the container, and run it safely with no drone connected.
+            Download the deployment script on the right, which will automatically fetch the source code, install dependencies, and run it safely in test mode with no drone connected.
           </p>
           
           <div className="bg-black rounded-xl p-4 font-mono text-[11px] overflow-hidden border border-stone-800 relative flex-1 flex flex-col justify-center">
@@ -141,11 +127,11 @@ docker run -it --device=/dev/video0:/dev/video0 gesture-drone-module
             <div className="text-stone-500 mb-1"># 2. Run the automated deployment script</div>
             <div className="text-emerald-500 mb-3">$ ./setup-drone.sh</div>
 
-            <div className="text-stone-500 mt-2">Setting up Gesture-Controlled Drone Module...</div>
-            <div className="text-stone-500">Cloning into 'high_school_io_2026'...</div>
-            <div className="text-stone-500">Building Docker image...</div>
-            <div className="text-stone-500">Starting module in test mode...</div>
-            <div className="text-stone-300 mt-2">Gesture detected: <span className="text-emerald-400 font-bold">peace</span> &rarr; move_by(1, 0, 0, 0)</div>
+            <div className="text-stone-500 mt-2">Setting up I-SAW Backpack Portal...</div>
+            <div className="text-stone-500">Cloning into 'Backpack'...</div>
+            <div className="text-stone-500">Installing dependencies (Test Mode)...</div>
+            <div className="text-stone-500">Starting Backpack Portal...</div>
+            <div className="text-stone-300 mt-2">Server running on <span className="text-emerald-400 font-bold">http://localhost:8000</span></div>
           </div>
         </div>
 
@@ -160,7 +146,7 @@ docker run -it --device=/dev/video0:/dev/video0 gesture-drone-module
                </li>
                <li className="flex items-start gap-2">
                  <span className="text-emerald-400 mt-0.5">&bull;</span>
-                 <span><strong className="text-stone-100">Live & Test Modes:</strong> Test safely via terminal, or switch <code className="text-emerald-400 font-mono text-xs">RUN_MODE="live"</code> to fly a real Parrot Anafi.</span>
+                 <span><strong className="text-stone-100">Live & Test Modes:</strong> Test safely with no aircraft, or run with <code className="text-emerald-400 font-mono text-xs">--live</code> to fly a real Parrot Anafi.</span>
                </li>
                <li className="flex items-start gap-2">
                  <span className="text-emerald-400 mt-0.5">&bull;</span>
