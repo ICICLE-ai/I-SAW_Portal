@@ -12,7 +12,9 @@ A public-facing web portal for **I-SAW: Infrastructure for Sensing and Analytics
 ## References
 
 https://github.com/ICICLE-ai/training-catalog/blob/docusaurus-demo/.claude/skills/icicle-readme-skill/templates/README.md
+
 https://github.com/ICICLE-ai/training-catalog/blob/docusaurus-demo/.claude/skills/icicle-component-info-skill/templates/component-info.yaml
+
 https://github.com/xw0108/Backpack
 
 ## Acknowledgements
