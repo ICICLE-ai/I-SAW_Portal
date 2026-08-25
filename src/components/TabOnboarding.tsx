@@ -279,7 +279,7 @@ function RentalService() {
         </div>
         <Package className="w-10 h-10 text-emerald-500" />
       </div>
-      <h3 className="text-2xl font-bold mb-4 text-stone-50">Request a Prebuilt Kit</h3>
+      <h3 className="text-2xl font-bold mb-4 text-stone-50">Request a Prebuilt Kit(COMING SOON)</h3>
       <p className="text-stone-400 text-sm max-w-md mb-8 leading-relaxed">
         Ready-to-use AI backpacks for K-12 camps. No setup required. We ship it fully configured to your campsite. Arrives charged, connected, and ready to deploy into the wilderness.
       </p>
@@ -292,7 +292,6 @@ function RentalService() {
         Open Intake Form
         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
       </a>
-      <p className="mt-6 text-xs text-stone-600">Rental services available for academic sessions starting 2024.</p>
     </motion.div>
   );
 }
