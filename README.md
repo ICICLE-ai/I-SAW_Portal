@@ -2,6 +2,8 @@
 
 A public-facing web portal for **I-SAW: Infrastructure for Sensing and Analytics on Wildlife** — a plug-and-play, edge-networked wildlife sensing platform built for K-12 camps, citizen scientists, and field researchers. The portal presents the project vision, an interactive "Smart Honeypot" data sandbox with analytics dashboards, and an onboarding hub where visitors can download a deployment script, generate a device `config.json`, or request a prebuilt field kit.
 
+The accompanying **ICICLE K-12 curriculum** (NSF AI Institute for Intelligent Cyberinfrastructure with Computational Learning in the Environment) introduces object detection, **predictive AI**, and **generative AI**, and how they differ. Its core lab is a closed loop: use generative AI to train predictive AI. Learners prompt a generative model (for example Gemini) to synthesize gesture images (`thumb_up`, `thumb_down`, and related classes), fine-tune a YOLO detector on that synthetic set locally or in the cloud, then deploy the lightweight model to an edge device or laptop. A camera recognizes gestures in real time and maps them to low-latency drone flight commands — the same computer-vision and edge-AI pattern used for intelligent device control and ecological work such as monitoring wildlife group behavior.
+
 **Tags:** Software, Animal-Ecology, Visual-Analytics
 
 
@@ -16,6 +18,8 @@ https://github.com/ICICLE-ai/training-catalog/blob/docusaurus-demo/.claude/skill
 https://github.com/ICICLE-ai/training-catalog/blob/docusaurus-demo/.claude/skills/icicle-component-info-skill/templates/component-info.yaml
 
 https://github.com/xw0108/Backpack
+
+`K-12 Curriculum.pdf` — ICICLE K-12 lesson on object detection, predictive vs. generative AI, synthetic YOLO training data, and real-time gesture control of a drone (the same edge-vision loop used for wildlife group-behavior monitoring).
 
 ## Acknowledgements
 
@@ -71,7 +75,7 @@ A dark, full-screen single-page app with an animated canvas background and a thr
 | Tab | Header label | Contents |
 | --- | --- | --- |
 | 1 | Project Vision & Strategic Pillars | The I-SAW mission plus three pillars — Networking, Smart Sensing, Innovative Hardware |
-| 2 | Data Sandbox & Functional Capabilities | Sub-tabs for *The Smart Honeypot*, *Analytics*, and *Gesture Drone Control* |
+| 2 | Data Sandbox & Functional Capabilities | Sub-tabs for *The Smart Honeypot*, *Analytics*, and *Gesture Drone Control* (the K-12 “generative AI trains predictive AI” demo: YOLO + live camera → drone pose) |
 | 3 | Onboarding Hub | Sub-tabs for *Quick Start*, *DIY Hardware*, and *Request Kit* |
 
 On narrow screens the tab bar collapses into a dropdown selector.
@@ -80,7 +84,7 @@ On narrow screens the tab bar collapses into a dropdown selector.
 
 1. Open **Data Sandbox & Functional Capabilities → The Smart Honeypot.** Step through the honeypot slideshow to see the feeder illustration, the sensor deployment map, and the three-stage confirmation pipeline (visual detection → audio confirmation → footfall confirmation).
 2. Switch to **Analytics.** You get metric cards (total visits, species detected, feed time, peak activity), a visits-over-time chart, an activity heatmap, a species visit summary table, and smart alerts — all rendered with Tailwind utilities and inline SVG, no charting library.
-3. Switch to **Gesture Drone Control** for the interactive command matrix and the detection-engine specs.
+3. Switch to **Gesture Drone Control** for the command matrix and detection-engine specs (YOLOv8 / MediaPipe). This tab is the in-portal view of the K-12 lab in `K-12 Curriculum.pdf`: generative AI synthesizes gesture training images from prompts; those images fine-tune a predictive YOLO detector; the slim model runs on the edge or a local machine, reads the camera, and drives drone attitude with low latency. The same pipeline is how I-SAW-style vision stacks can watch group behavior in the field without shipping raw video off-site.
 4. Move to the **Onboarding Hub → Quick Start** and click *Get Deployment Package*. The browser generates and downloads `setup-drone.sh` client-side.
 5. In **DIY Hardware**, click *Generate sample config.json file* to download a provisioning payload describing the MQTT broker, hardware modes, and cloud endpoint.
 
@@ -204,11 +208,11 @@ Three ideas drive the design:
 
 - **Cross-modal wake-ups ("Bullseye Ambush").** Ultra-low-power audio sentinels listen continuously and wake high-power camera traps over a local MQTT channel only when something is detected. Power, not compute, is the binding constraint in the field.
 - **Three-step verification.** A visit is confirmed by (1) visual detection from wide-angle AI edge cameras, (2) audio matching of bird song against species call libraries, and (3) footfall sensors on each perch proving a physical landing. Any one channel alone produces false positives; agreement across three modalities does not.
-- **Privacy at the edge.** Reduction happens on-device, so raw imagery and audio need not leave the deployment site. Only reduced observations travel onward to the hosted cyberinfrastructure.
+- **Privacy at the edge.** Reduction happens on-device, so raw imagery and audio need not leave the deployment site. Only reduced observations travel onward to the hosted cyberinfrastructure. The K-12 curriculum makes that idea concrete: a **predictive** detector (YOLO object detection) runs on the edge for low-latency decisions, while **generative** AI is used upstream to synthesize labeled gesture images (`thumb_up`, `thumb_down`, …) so students can fine-tune that detector without collecting a large field dataset first.
 
 ## What this repository is
 
-This repository is the **portal**, not the sensing stack. It is a static React single-page app whose job is communication and conversion: explain the project to NSF program managers and K-12 camp counselors, demonstrate the analytics value with a realistic mockup, and hand developers a concrete next step. All sensor data in the sandbox is synthetic and generated in the browser.
+This repository is the **portal**, not the sensing stack. It is a static React single-page app whose job is communication and conversion: explain the project to NSF program managers and K-12 camp counselors, demonstrate the analytics value with a realistic mockup, and hand developers a concrete next step. The **Gesture Drone Control** sandbox is the narrative counterpart of the ICICLE K-12 curriculum: it shows how synthetic data from generative AI can train a predictive detector, and how that detector on the edge turns a webcam into a real-time controller — the same pattern as on-device wildlife observation. All sensor data in the sandbox is illustrative and generated in the browser. The full lesson (concepts, prompt-to-image data generation, YOLO fine-tuning, and edge deployment) lives in `K-12 Curriculum.pdf`.
 
 ## Architecture
 
@@ -233,6 +237,7 @@ Supporting files:
 | `icicle-service.yaml` | ICICLE service identity and runtime declaration |
 | `.github/workflows/deploy.yaml` | Deploys via the shared ICICLE CI/CD template |
 | `CLAUDE.md` | Team ownership rules and design conventions |
+| `K-12 Curriculum.pdf` | ICICLE K-12 curriculum: object detection, predictive vs. generative AI, synthetic YOLO training, edge gesture control |
 
 ## Design choices
 
